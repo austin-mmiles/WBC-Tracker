@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="900">
 <title>WBC Fantasy 2026 · Live Leaderboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -54,7 +55,13 @@
   .roster-table th.num { text-align:right; }
   .roster-table td { padding:.45rem .6rem; border-bottom:1px solid rgba(37,44,53,.5); }
   .roster-table td.num { text-align:right; font-family:'DM Mono',monospace; font-size:.72rem; }
-  .roster-table td.stat-cell { font-family:'DM Mono',monospace; font-size:.68rem; color:var(--muted); }
+  .spills { display:flex; flex-wrap:wrap; gap:.25rem; }
+  .spill { font-family:'DM Mono',monospace; font-size:.62rem; padding:.15rem .4rem; border-radius:3px; border:1px solid var(--border); white-space:nowrap; }
+  .slabel { opacity:.6; font-size:.58rem; }
+  .sp-pos { color:var(--accent2); border-color:rgba(62,207,142,.25); background:rgba(62,207,142,.07); }
+  .sp-neg { color:var(--red); border-color:rgba(240,82,82,.25); background:rgba(240,82,82,.07); }
+  .sp-zero { color:var(--muted); border-color:var(--border); background:transparent; }
+  .no-stats { font-family:'DM Mono',monospace; font-size:.65rem; color:var(--muted); font-style:italic; }
   .roster-table tr:last-child td { border-bottom:none; }
   .pos-badge { font-family:'DM Mono',monospace; font-size:.58rem; background:var(--surface2); border:1px solid var(--border); border-radius:3px; padding:.1rem .35rem; color:var(--muted); margin-right:.4rem; }
   .pts-pos { color:var(--accent2); }
@@ -92,8 +99,8 @@
   </div>
   <div class="updated">
     <strong>STATIC SNAPSHOT</strong>
-    March 06, 2026 at 09:14 PM<br>
-    7 games processed · 195 players found
+    March 06, 2026 at 01:39 PM PST<br>
+    7 games processed · 196 players found
   </div>
 </header>
 
@@ -105,7 +112,7 @@
 
 <div id="leaderboard" class="tab-content active">
   <div class="info-note">
-    ⚡ Snapshot generated March 06, 2026 at 09:14 PM from 7 completed WBC games.
+    ⚡ Snapshot generated March 06, 2026 at 01:39 PM PST from 7 completed WBC games.
     Re-run <code>python3 fetch_wbc_stats.py</code> to refresh scores.
   </div>
   <div class="leaderboard">
@@ -117,12 +124,12 @@
             <div class="team-meta">20 PLAYERS · 7 WITH STATS</div>
           </div>
           <div class="score-block">
-            <div class="score-pts">41.0</div>
+            <div class="score-pts">41</div>
             <div class="score-label">PTS</div>
           </div>
           <div class="stat-pills">
-            <div class="stat-pill pos">HIT <span>+32.0</span></div>
-            <div class="stat-pill pos">PITCH <span>+9.0</span></div>
+            <div class="stat-pill pos">HIT <span>+32</span></div>
+            <div class="stat-pill pos">PITCH <span>+9</span></div>
             <div class="stat-pill">FOUND <span>7/20</span></div>
             <div style="flex:1"></div>
             <div class="stat-pill toggle-btn" onclick="toggleRoster(this)" style="border-color:#f05252;color:#f05252">▼ ROSTER</div>
@@ -135,102 +142,102 @@
               <tbody>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇯🇵 Shohei Ohtani</td>
-              <td class="stat-cell">3H 1HR 5RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-pos">7&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">5&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+13</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇯🇵 Yoshinobu Yamamoto</td>
-              <td class="stat-cell">2.2IP 2K 0ER 1W</td>
-              <td class="num pts-pos">+9.0</td>
+              <td><div class="spills"><span class="spill sp-pos">2.2&nbsp;<span class="slabel">IP</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">W</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">L</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">K</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">ER</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HA</span></span><span class="spill sp-neg">3&nbsp;<span class="slabel">BBA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SV</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HLD</span></span></div></td>
+              <td class="num pts-pos">+9</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇲🇽 Jonathan Aranda</td>
-              <td class="stat-cell">2H 1HR 3RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-pos">5&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">3&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+8</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇻🇪 Ronald Acuna Jr.</td>
-              <td class="stat-cell">1H 0HR 0RBI 2R</td>
+              <td><div class="spills"><span class="spill sp-pos">2&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+4</td>
             </tr>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇻🇪 Luis Arraez</td>
-              <td class="stat-cell">1H 0HR 2RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-pos">1&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+4</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇲🇽 Randy Arozarena</td>
-              <td class="stat-cell">1H 0HR 1RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-pos">1&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+3</td>
             </tr>
             <tr>
               <td><span class="pos-badge">C</span>🇺🇸 Cal Raleigh</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇩🇴 Vladimir Guerrero Jr.</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇨🇦 Josh Naylor</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇵🇷 Nolan Arenado</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇩🇴 Ketel Marte</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇳🇱 Xander Bogaerts</td>
-              <td class="stat-cell">1H 0HR 0RBI 0R</td>
+              <td><div class="spills"><span class="spill sp-pos">1&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-zero">0</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇺🇸 Aaron Judge</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇩🇴 Juan Soto</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇨🇦 Bo Naylor</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇺🇸 Paul Skenes</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇯🇵 Yusei Kikuchi</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇳🇱 Kenley Jansen</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇨🇦 Jameson Taillon</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇮🇹 Aaron Nola</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr></tbody>
             </table>
@@ -243,12 +250,12 @@
             <div class="team-meta">20 PLAYERS · 9 WITH STATS</div>
           </div>
           <div class="score-block">
-            <div class="score-pts">41.0</div>
+            <div class="score-pts">40</div>
             <div class="score-label">PTS</div>
           </div>
           <div class="stat-pills">
-            <div class="stat-pill pos">HIT <span>+29.0</span></div>
-            <div class="stat-pill pos">PITCH <span>+12.0</span></div>
+            <div class="stat-pill pos">HIT <span>+28</span></div>
+            <div class="stat-pill pos">PITCH <span>+12</span></div>
             <div class="stat-pill">FOUND <span>9/20</span></div>
             <div style="flex:1"></div>
             <div class="stat-pill toggle-btn" onclick="toggleRoster(this)" style="border-color:#a855f7;color:#a855f7">▼ ROSTER</div>
@@ -261,103 +268,103 @@
               <tbody>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇯🇵 Shohei Ohtani</td>
-              <td class="stat-cell">3H 1HR 5RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-pos">7&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">5&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+13</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇯🇵 Yoshinobu Yamamoto</td>
-              <td class="stat-cell">2.2IP 2K 0ER 1W</td>
-              <td class="num pts-pos">+9.0</td>
+              <td><div class="spills"><span class="spill sp-pos">2.2&nbsp;<span class="slabel">IP</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">W</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">L</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">K</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">ER</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HA</span></span><span class="spill sp-neg">3&nbsp;<span class="slabel">BBA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SV</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HLD</span></span></div></td>
+              <td class="num pts-pos">+9</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇯🇵 Munetaka Murakami</td>
-              <td class="stat-cell">1H 0HR 1RBI 3R</td>
+              <td><div class="spills"><span class="spill sp-pos">1&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">3&nbsp;<span class="slabel">R</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+7</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇻🇪 Ronald Acuna Jr.</td>
-              <td class="stat-cell">1H 0HR 0RBI 2R</td>
+              <td><div class="spills"><span class="spill sp-pos">2&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+4</td>
             </tr>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇲🇽 Randy Arozarena</td>
-              <td class="stat-cell">1H 0HR 1RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-pos">1&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+3</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇻🇪 Ranger Suarez</td>
-              <td class="stat-cell">2.0IP 1K 1ER 1W</td>
-              <td class="num pts-pos">+3.0</td>
+              <td><div class="spills"><span class="spill sp-pos">2.0&nbsp;<span class="slabel">IP</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">W</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">L</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">K</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">ER</span></span><span class="spill sp-neg">3&nbsp;<span class="slabel">HA</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">BBA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SV</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HLD</span></span></div></td>
+              <td class="num pts-pos">+3</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇲🇽 Jarren Duran</td>
-              <td class="stat-cell">0H 0HR 0RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-zero">0&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">2&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+2</td>
             </tr>
             <tr>
               <td><span class="pos-badge">C</span>🇲🇽 Alejandro Kirk</td>
-              <td class="stat-cell">0H 0HR 0RBI 0R</td>
+              <td><div class="spills"><span class="spill sp-zero">0&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-zero">0</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇺🇸 Bryce Harper</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇩🇴 Ketel Marte</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇮🇹 Vinnie Pasquantino</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
-              <td><span class="pos-badge">INF</span>🇬🇧 Jazz Chisholm Jr.</td>
-              <td class="stat-cell">0H 0HR 0RBI 0R</td>
-              <td class="num pts-zero">0</td>
-            </tr>
-            <tr>
               <td><span class="pos-badge">INF</span>🇨🇦 Josh Naylor</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇩🇴 Fernando Tatis Jr.</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇩🇴 Juan Soto</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇺🇸 Aaron Judge</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇺🇸 Paul Skenes</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇵🇷 Edwin Diaz</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇮🇹 Aaron Nola</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇵🇷 Seth Lugo</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
+            </tr>
+            <tr>
+              <td><span class="pos-badge">INF</span>🇬🇧 Jazz Chisholm Jr.</td>
+              <td><div class="spills"><span class="spill sp-zero">0&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
+              <td class="num pts-neg">-1</td>
             </tr></tbody>
             </table>
           </div>
@@ -369,12 +376,12 @@
             <div class="team-meta">20 PLAYERS · 7 WITH STATS</div>
           </div>
           <div class="score-block">
-            <div class="score-pts">34.0</div>
+            <div class="score-pts">34</div>
             <div class="score-label">PTS</div>
           </div>
           <div class="stat-pills">
-            <div class="stat-pill pos">HIT <span>+25.0</span></div>
-            <div class="stat-pill pos">PITCH <span>+9.0</span></div>
+            <div class="stat-pill pos">HIT <span>+25</span></div>
+            <div class="stat-pill pos">PITCH <span>+9</span></div>
             <div class="stat-pill">FOUND <span>7/20</span></div>
             <div style="flex:1"></div>
             <div class="stat-pill toggle-btn" onclick="toggleRoster(this)" style="border-color:#f5c542;color:#f5c542">▼ ROSTER</div>
@@ -387,102 +394,102 @@
               <tbody>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇯🇵 Shohei Ohtani</td>
-              <td class="stat-cell">3H 1HR 5RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-pos">7&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">5&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+13</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇯🇵 Yoshinobu Yamamoto</td>
-              <td class="stat-cell">2.2IP 2K 0ER 1W</td>
-              <td class="num pts-pos">+9.0</td>
+              <td><div class="spills"><span class="spill sp-pos">2.2&nbsp;<span class="slabel">IP</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">W</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">L</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">K</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">ER</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HA</span></span><span class="spill sp-neg">3&nbsp;<span class="slabel">BBA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SV</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HLD</span></span></div></td>
+              <td class="num pts-pos">+9</td>
             </tr>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇻🇪 Ronald Acuna Jr.</td>
-              <td class="stat-cell">1H 0HR 0RBI 2R</td>
+              <td><div class="spills"><span class="spill sp-pos">2&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+4</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇯🇵 Seiya Suzuki</td>
-              <td class="stat-cell">1H 0HR 0RBI 2R</td>
+              <td><div class="spills"><span class="spill sp-pos">1&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+3</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇰🇷 Hyeseong Kim</td>
-              <td class="stat-cell">0H 0HR 1RBI 0R</td>
+              <td><div class="spills"><span class="spill sp-zero">0&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+2</td>
             </tr>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇲🇽 Jarren Duran</td>
-              <td class="stat-cell">0H 0HR 0RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-zero">0&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">2&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+2</td>
             </tr>
             <tr>
               <td><span class="pos-badge">C</span>🇻🇪 William Contreras</td>
-              <td class="stat-cell">0H 0HR 0RBI 0R</td>
+              <td><div class="spills"><span class="spill sp-zero">0&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+1</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇩🇴 Vladimir Guerrero Jr.</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇨🇦 Josh Naylor</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇨🇦 Otto Lopez</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇵🇷 Nolan Arenado</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇻🇪 Eugenio Suarez</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇩🇴 Fernando Tatis Jr.</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇵🇷 Heliot Ramos</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇺🇸 Aaron Judge</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇩🇴 Christopher Sanchez</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇨🇦 James Paxton</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇵🇷 Edwin Diaz</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇺🇸 Paul Skenes</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇺🇸 Mason Miller</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr></tbody>
             </table>
@@ -495,12 +502,12 @@
             <div class="team-meta">20 PLAYERS · 8 WITH STATS</div>
           </div>
           <div class="score-block">
-            <div class="score-pts">32.0</div>
+            <div class="score-pts">32</div>
             <div class="score-label">PTS</div>
           </div>
           <div class="stat-pills">
-            <div class="stat-pill pos">HIT <span>+20.0</span></div>
-            <div class="stat-pill pos">PITCH <span>+12.0</span></div>
+            <div class="stat-pill pos">HIT <span>+20</span></div>
+            <div class="stat-pill pos">PITCH <span>+12</span></div>
             <div class="stat-pill">FOUND <span>8/20</span></div>
             <div style="flex:1"></div>
             <div class="stat-pill toggle-btn" onclick="toggleRoster(this)" style="border-color:#4da6ff;color:#4da6ff">▼ ROSTER</div>
@@ -513,102 +520,102 @@
               <tbody>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇯🇵 Shohei Ohtani</td>
-              <td class="stat-cell">3H 1HR 5RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-pos">7&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">5&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+13</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇯🇵 Yoshinobu Yamamoto</td>
-              <td class="stat-cell">2.2IP 2K 0ER 1W</td>
-              <td class="num pts-pos">+9.0</td>
+              <td><div class="spills"><span class="spill sp-pos">2.2&nbsp;<span class="slabel">IP</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">W</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">L</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">K</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">ER</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HA</span></span><span class="spill sp-neg">3&nbsp;<span class="slabel">BBA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SV</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HLD</span></span></div></td>
+              <td class="num pts-pos">+9</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇻🇪 Ronald Acuna Jr.</td>
-              <td class="stat-cell">1H 0HR 0RBI 2R</td>
+              <td><div class="spills"><span class="spill sp-pos">2&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+4</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇻🇪 Ranger Suarez</td>
-              <td class="stat-cell">2.0IP 1K 1ER 1W</td>
-              <td class="num pts-pos">+3.0</td>
+              <td><div class="spills"><span class="spill sp-pos">2.0&nbsp;<span class="slabel">IP</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">W</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">L</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">K</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">ER</span></span><span class="spill sp-neg">3&nbsp;<span class="slabel">HA</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">BBA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SV</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HLD</span></span></div></td>
+              <td class="num pts-pos">+3</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇰🇷 Hyeseong Kim</td>
-              <td class="stat-cell">0H 0HR 1RBI 0R</td>
+              <td><div class="spills"><span class="spill sp-zero">0&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+2</td>
             </tr>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇲🇽 Rowdy Tellez</td>
-              <td class="stat-cell">0H 0HR 0RBI 0R</td>
+              <td><div class="spills"><span class="spill sp-zero">0&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+1</td>
             </tr>
             <tr>
               <td><span class="pos-badge">C</span>🇲🇽 Alejandro Kirk</td>
-              <td class="stat-cell">0H 0HR 0RBI 0R</td>
+              <td><div class="spills"><span class="spill sp-zero">0&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-zero">0</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇺🇸 Bobby Witt Jr.</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇩🇴 Ketel Marte</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇳🇱 Xander Bogaerts</td>
-              <td class="stat-cell">1H 0HR 0RBI 0R</td>
+              <td><div class="spills"><span class="spill sp-pos">1&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-zero">0</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇨🇦 Josh Naylor</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇵🇷 Nolan Arenado</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇩🇴 Juan Soto</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇩🇴 Fernando Tatis Jr.</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇻🇪 Jackson Chourio</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇺🇸 Kyle Schwarber</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇯🇵 Hiromi Itoh</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇺🇸 Mason Miller</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇵🇷 Edwin Diaz</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇵🇷 Seth Lugo</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr></tbody>
             </table>
@@ -618,16 +625,16 @@
           <div class="rank-num">5</div>
           <div class="team-info">
             <div class="team-name" style="color:#ff6eb4">Quinn</div>
-            <div class="team-meta">20 PLAYERS · 7 WITH STATS</div>
+            <div class="team-meta">20 PLAYERS · 8 WITH STATS</div>
           </div>
           <div class="score-block">
-            <div class="score-pts">28.0</div>
+            <div class="score-pts">31</div>
             <div class="score-label">PTS</div>
           </div>
           <div class="stat-pills">
-            <div class="stat-pill pos">HIT <span>+22.0</span></div>
-            <div class="stat-pill pos">PITCH <span>+6.0</span></div>
-            <div class="stat-pill">FOUND <span>7/20</span></div>
+            <div class="stat-pill pos">HIT <span>+22</span></div>
+            <div class="stat-pill pos">PITCH <span>+9</span></div>
+            <div class="stat-pill">FOUND <span>8/20</span></div>
             <div style="flex:1"></div>
             <div class="stat-pill toggle-btn" onclick="toggleRoster(this)" style="border-color:#ff6eb4;color:#ff6eb4">▼ ROSTER</div>
           </div>
@@ -639,102 +646,102 @@
               <tbody>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇯🇵 Shohei Ohtani</td>
-              <td class="stat-cell">3H 1HR 5RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-pos">7&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">5&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+13</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇻🇪 Eduard Bazardo</td>
-              <td class="stat-cell">1.0IP 0K 0ER 0W</td>
-              <td class="num pts-pos">+5.0</td>
+              <td><div class="spills"><span class="spill sp-pos">1.0&nbsp;<span class="slabel">IP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">W</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">L</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">K</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">ER</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BBA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SV</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">HLD</span></span></div></td>
+              <td class="num pts-pos">+5</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇻🇪 Ronald Acuna Jr.</td>
-              <td class="stat-cell">1H 0HR 0RBI 2R</td>
+              <td><div class="spills"><span class="spill sp-pos">2&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+4</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇯🇵 Shugo Maki</td>
-              <td class="stat-cell">1H 0HR 0RBI 2R</td>
+              <td><div class="spills"><span class="spill sp-pos">1&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
+              <td class="num pts-pos">+3</td>
+            </tr>
+            <tr>
+              <td><span class="pos-badge">P</span>🇲🇽 Victor Vodnik</td>
+              <td><div class="spills"><span class="spill sp-pos">1.0&nbsp;<span class="slabel">IP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">W</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">L</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">K</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">ER</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HA</span></span><span class="spill sp-neg">2&nbsp;<span class="slabel">BBA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SV</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">HLD</span></span></div></td>
               <td class="num pts-pos">+3</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇻🇪 Maikel Garcia</td>
-              <td class="stat-cell">1H 0HR 0RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-pos">1&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+2</td>
             </tr>
             <tr>
-              <td><span class="pos-badge">P</span>🇲🇽 Victor Vodnik</td>
-              <td class="stat-cell">1.0IP 0K 0ER 0W</td>
-              <td class="num pts-pos">+1.0</td>
+              <td><span class="pos-badge">P</span>🇲🇽 Andres Munoz</td>
+              <td><div class="spills"><span class="spill sp-pos">1.0&nbsp;<span class="slabel">IP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">W</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">L</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">K</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">ER</span></span><span class="spill sp-neg">2&nbsp;<span class="slabel">HA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BBA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SV</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HLD</span></span></div></td>
+              <td class="num pts-pos">+1</td>
             </tr>
             <tr>
               <td><span class="pos-badge">C</span>🇲🇽 Alejandro Kirk</td>
-              <td class="stat-cell">0H 0HR 0RBI 0R</td>
+              <td><div class="spills"><span class="spill sp-zero">0&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-zero">0</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇩🇴 Vladimir Guerrero Jr.</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇺🇸 Bryce Harper</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇺🇸 Bobby Witt Jr.</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇨🇴 Michael Arroyo</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇺🇸 Aaron Judge</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇩🇴 Juan Soto</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇩🇴 Julio Rodriguez</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇨🇦 Denzel Clarke</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
-              <td><span class="pos-badge">UTIL</span>🇵🇷 Heliot Ramos</td>
-              <td class="stat-cell">—</td>
+              <td><span class="pos-badge">UTIL</span>🇨🇦 Owen Caissie</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇵🇷 Edwin Diaz</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇯🇵 Taisei Ota</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇵🇷 Seth Lugo</td>
-              <td class="stat-cell">—</td>
-              <td class="num pts-zero">—</td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">P</span>🇲🇽 Andres Munoz</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr></tbody>
             </table>
@@ -744,16 +751,16 @@
           <div class="rank-num">6</div>
           <div class="team-info">
             <div class="team-name" style="color:#3ecf8e">Evan</div>
-            <div class="team-meta">20 PLAYERS · 6 WITH STATS</div>
+            <div class="team-meta">20 PLAYERS · 7 WITH STATS</div>
           </div>
           <div class="score-block">
-            <div class="score-pts">27.0</div>
+            <div class="score-pts">27</div>
             <div class="score-label">PTS</div>
           </div>
           <div class="stat-pills">
-            <div class="stat-pill pos">HIT <span>+18.0</span></div>
-            <div class="stat-pill pos">PITCH <span>+9.0</span></div>
-            <div class="stat-pill">FOUND <span>6/20</span></div>
+            <div class="stat-pill pos">HIT <span>+17</span></div>
+            <div class="stat-pill pos">PITCH <span>+10</span></div>
+            <div class="stat-pill">FOUND <span>7/20</span></div>
             <div style="flex:1"></div>
             <div class="stat-pill toggle-btn" onclick="toggleRoster(this)" style="border-color:#3ecf8e;color:#3ecf8e">▼ ROSTER</div>
           </div>
@@ -765,103 +772,103 @@
               <tbody>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇯🇵 Shohei Ohtani</td>
-              <td class="stat-cell">3H 1HR 5RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-pos">7&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">5&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+13</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇯🇵 Yoshinobu Yamamoto</td>
-              <td class="stat-cell">2.2IP 2K 0ER 1W</td>
-              <td class="num pts-pos">+9.0</td>
+              <td><div class="spills"><span class="spill sp-pos">2.2&nbsp;<span class="slabel">IP</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">W</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">L</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">K</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">ER</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HA</span></span><span class="spill sp-neg">3&nbsp;<span class="slabel">BBA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SV</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HLD</span></span></div></td>
+              <td class="num pts-pos">+9</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇲🇽 Randy Arozarena</td>
-              <td class="stat-cell">1H 0HR 1RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-pos">1&nbsp;<span class="slabel">TB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+3</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇲🇽 Jarren Duran</td>
-              <td class="stat-cell">0H 0HR 0RBI 1R</td>
+              <td><div class="spills"><span class="spill sp-zero">0&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">R</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">SB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">BB</span></span><span class="spill sp-pos">1&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">2&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-pos">+2</td>
             </tr>
             <tr>
+              <td><span class="pos-badge">P</span>🇲🇽 Andres Munoz</td>
+              <td><div class="spills"><span class="spill sp-pos">1.0&nbsp;<span class="slabel">IP</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">W</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">L</span></span><span class="spill sp-pos">2&nbsp;<span class="slabel">K</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">ER</span></span><span class="spill sp-neg">2&nbsp;<span class="slabel">HA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BBA</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SV</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HLD</span></span></div></td>
+              <td class="num pts-pos">+1</td>
+            </tr>
+            <tr>
               <td><span class="pos-badge">C</span>🇺🇸 Cal Raleigh</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇩🇴 Vladimir Guerrero Jr.</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇩🇴 Ketel Marte</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇻🇪 Gleyber Torres</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇵🇷 Nolan Arenado</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">INF</span>🇺🇸 Alex Bregman</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
-              <td><span class="pos-badge">INF</span>🇬🇧 Jazz Chisholm Jr.</td>
-              <td class="stat-cell">0H 0HR 0RBI 0R</td>
-              <td class="num pts-zero">0</td>
-            </tr>
-            <tr>
               <td><span class="pos-badge">OF</span>🇩🇴 Juan Soto</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">OF</span>🇻🇪 Jackson Chourio</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇨🇦 Tyler O'Neil</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">UTIL</span>🇳🇱 Xander Bogaerts</td>
-              <td class="stat-cell">1H 0HR 0RBI 0R</td>
+              <td><div class="spills"><span class="spill sp-pos">1&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
               <td class="num pts-zero">0</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇯🇵 Hiromi Itoh</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇵🇷 Seth Lugo</td>
-              <td class="stat-cell">—</td>
-              <td class="num pts-zero">—</td>
-            </tr>
-            <tr>
-              <td><span class="pos-badge">P</span>🇲🇽 Andres Munoz</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇵🇷 Edwin Diaz</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
             </tr>
             <tr>
               <td><span class="pos-badge">P</span>🇺🇸 Paul Skenes</td>
-              <td class="stat-cell">—</td>
+              <td><span class="no-stats">no stats yet</span></td>
               <td class="num pts-zero">—</td>
+            </tr>
+            <tr>
+              <td><span class="pos-badge">INF</span>🇬🇧 Jazz Chisholm Jr.</td>
+              <td><div class="spills"><span class="spill sp-zero">0&nbsp;<span class="slabel">TB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">RBI</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">R</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">SB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">BB</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">HBP</span></span><span class="spill sp-neg">1&nbsp;<span class="slabel">SO</span></span><span class="spill sp-zero">0&nbsp;<span class="slabel">CS</span></span></div></td>
+              <td class="num pts-neg">-1</td>
             </tr></tbody>
             </table>
           </div>

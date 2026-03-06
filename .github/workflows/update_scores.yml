@@ -1,0 +1,43 @@
+name: Update WBC Fantasy Scores
+
+on:
+  # Run every 30 minutes during WBC tournament dates
+  schedule:
+    - cron: '*/30 * * * *'
+
+  # Also allow manual trigger from GitHub.com anytime
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    # Required so the action can push the updated index.html back to the repo
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch WBC stats and generate dashboard
+        run: python3 fetch_wbc_stats.py
+
+      - name: Rename output to index.html
+        run: mv wbc_dashboard.html index.html
+
+      - name: Commit and push updated dashboard
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git diff --staged --quiet || git commit -m "📊 Update scores $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push

@@ -1,10 +1,6 @@
 name: Update WBC Fantasy Scores
 
 on:
-  # Run every 30 minutes during WBC tournament dates
-  schedule:
-    - cron: '*/15 * * * *'
-
   # Also allow manual trigger from GitHub.com anytime
   workflow_dispatch:
 

@@ -153,7 +153,7 @@ ROSTERS = {
         {"name": "Julio Rodriguez",       "pos": "OF",   "nation": "DR"},
         {"name": "Shohei Ohtani",         "pos": "UTIL", "nation": "Japan"},
         {"name": "Denzel Clarke",         "pos": "UTIL", "nation": "Canada"},
-        {"name": "Owen Caissie",          "pos": "UTIL", "nation": "Canada"},
+        {"name": "Heliot Ramos",          "pos": "UTIL", "nation": "PR"},
         {"name": "Edwin Diaz",            "pos": "P",    "nation": "PR"},
         {"name": "Taisei Ota",            "pos": "P",    "nation": "Japan"},
         {"name": "Seth Lugo",             "pos": "P",    "nation": "PR"},

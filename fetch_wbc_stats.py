@@ -66,7 +66,7 @@ ROSTERS = {
         {"name": "Shohei Ohtani",         "pos": "UTIL", "nation": "Japan"},
         {"name": "Ronald Acuna Jr.",      "pos": "UTIL", "nation": "Venezuela"},
         {"name": "Jarren Duran",          "pos": "UTIL", "nation": "Mexico"},
-        {"name": "Christopher Sanchez",   "pos": "P",    "nation": "DR"},
+        {"name": "Cristopher Sanchez",    "pos": "P",    "nation": "DR"},
         {"name": "Yoshinobu Yamamoto",    "pos": "P",    "nation": "Japan"},
         {"name": "James Paxton",          "pos": "P",    "nation": "Canada"},
         {"name": "Edwin Diaz",            "pos": "P",    "nation": "PR"},

@@ -161,7 +161,7 @@ ROSTERS = {
         {"name": "Juan Soto",             "pos": "OF",   "nation": "DR"},
         {"name": "Jackson Chourio",       "pos": "OF",   "nation": "Venezuela"},
         {"name": "Shohei Ohtani",         "pos": "UTIL", "nation": "Japan"},
-        {"name": "Tyler O'Neil",          "pos": "UTIL", "nation": "Canada"},
+        {"name": "Tyler O'Neill",          "pos": "UTIL", "nation": "Canada"},
         {"name": "Xander Bogaerts",       "pos": "UTIL", "nation": "Netherlands"},
         {"name": "Hiromi Itoh",           "pos": "P",    "nation": "Japan"},
         {"name": "Seth Lugo",             "pos": "P",    "nation": "PR"},

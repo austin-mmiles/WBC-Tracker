@@ -27,6 +27,37 @@ BASE      = "https://statsapi.mlb.com/api/v1"
 HEADERS   = {"User-Agent": "WBCFantasy/1.0"}
 TIMEOUT   = 15
 
+# The Odds API key — get a free key at https://the-odds-api.com
+ODDS_API_KEY = "YOUR_ODDS_API_KEY_HERE"
+
+# WBC nation label → search strings for matching odds API team names
+NATION_ALIASES = {
+    "USA":         ["united states", "usa"],
+    "Japan":       ["japan"],
+    "DR":          ["dominican republic", "dominican"],
+    "Mexico":      ["mexico"],
+    "Venezuela":   ["venezuela"],
+    "PR":          ["puerto rico"],
+    "Korea":       ["korea", "south korea"],
+    "Canada":      ["canada"],
+    "Netherlands": ["netherlands"],
+    "Italy":       ["italy"],
+    "Cuba":        ["cuba"],
+    "Panama":      ["panama"],
+    "GB":          ["great britain", "gb"],
+    "Colombia":    ["colombia"],
+    "Australia":   ["australia"],
+    "Taiwan":      ["taiwan", "chinese taipei"],
+}
+
+# WBC bracket: max possible remaining games by round
+# Pool play (4 games) + Super Round (4) + Semi (1) + Final (1) = 10 max total
+WBC_MAX_GAMES = 10
+
+# Pitcher role assumptions: innings per game appearance
+PITCHER_IP_STARTER  = 3.0
+PITCHER_IP_RELIEVER = 1.0
+
 # ─── ROSTERS ──────────────────────────────────────────────────────────────────
 ROSTERS = {
     "Austin": {"color": "#4da6ff", "players": [
@@ -169,7 +200,146 @@ SCORING = {
     "pitching": {"ip":3,"w":2,"l":-2,"qs":3,"k":1,"bbA":-1,"er":-2,"hb":-1,"hA":-1,"hld":2,"sv":4},
 }
 
-# ─── HELPERS ──────────────────────────────────────────────────────────────────
+# ─── OWNERSHIP ────────────────────────────────────────────────────────────────
+def compute_ownership(norm_fn):
+    """Returns {normalized_player_name: (count, num_teams, [owner_names])} across all rosters."""
+    from collections import defaultdict
+    num_teams = len(ROSTERS)
+    owner_map = defaultdict(list)
+    for owner, data in ROSTERS.items():
+        for p in data["players"]:
+            owner_map[norm_fn(p["name"])].append(owner)
+    return {name: (len(owners), num_teams, owners) for name, owners in owner_map.items()}
+
+# ─── ODDS & PROJECTIONS ───────────────────────────────────────────────────────
+def fetch_nation_odds():
+    """
+    Fetch WBC advancement odds from The Odds API.
+    Returns dict: {nation_label: {"eliminated": bool, "expected_games": float}}
+    Falls back to uniform distribution if API unavailable or key not set.
+    """
+    nation_data = {n: {"eliminated": False, "expected_games": 3.0} for n in NATION_ALIASES}
+
+    if ODDS_API_KEY == "YOUR_ODDS_API_KEY_HERE":
+        print("  ⚠️  No Odds API key set — using fallback uniform projection (3 expected games each)")
+        return nation_data
+
+    try:
+        # Try to find WBC odds — sport key may be baseball_wbc or similar
+        sports_url = "https://api.the-odds-api.com/v4/sports"
+        r = requests.get(sports_url, params={"apiKey": ODDS_API_KEY}, timeout=TIMEOUT)
+        r.raise_for_status()
+        sports = r.json()
+        wbc_keys = [s["key"] for s in sports if "wbc" in s["key"].lower() or
+                    ("baseball" in s["key"].lower() and "classic" in s.get("title","").lower())]
+        print(f"  📡 Odds API sports found: {[s['key'] for s in sports if 'baseball' in s['key'].lower()]}")
+
+        if not wbc_keys:
+            # Fall back: try generic baseball outrights
+            wbc_keys = ["baseball_wbc", "baseball_world_baseball_classic"]
+
+        for sport_key in wbc_keys:
+            try:
+                # Fetch outright winner odds to get championship probabilities
+                odds_url = f"https://api.the-odds-api.com/v4/sports/{sport_key}/odds"
+                r = requests.get(odds_url, params={
+                    "apiKey": ODDS_API_KEY,
+                    "regions": "us",
+                    "markets": "outrights,h2h",
+                    "oddsFormat": "decimal",
+                }, timeout=TIMEOUT)
+                if r.status_code == 404:
+                    continue
+                r.raise_for_status()
+                events = r.json()
+                print(f"  📡 Got {len(events)} events from odds API (sport={sport_key})")
+
+                # Parse team win probabilities from implied odds
+                team_probs = {}
+                for event in events:
+                    for bm in event.get("bookmakers", [])[:1]:  # use first bookmaker
+                        for market in bm.get("markets", []):
+                            for outcome in market.get("outcomes", []):
+                                tname = outcome["name"].lower()
+                                prob = 1 / outcome["price"] if outcome["price"] > 0 else 0
+                                team_probs[tname] = max(team_probs.get(tname, 0), prob)
+
+                if team_probs:
+                    print(f"  📡 Team probabilities parsed: {list(team_probs.keys())[:6]}...")
+                    # Normalize probabilities (bookmaker overround)
+                    total = sum(team_probs.values())
+                    if total > 0:
+                        team_probs = {k: v / total for k, v in team_probs.items()}
+
+                    # Map to our nation labels
+                    for nation, aliases in NATION_ALIASES.items():
+                        best_prob = 0.0
+                        for tname, prob in team_probs.items():
+                            if any(alias in tname for alias in aliases):
+                                best_prob = max(best_prob, prob)
+
+                        if best_prob > 0:
+                            # Convert championship probability to expected remaining games
+                            # WBC has ~4 rounds. P(win title)=p → expected games ≈
+                            # p(advance each round) estimated via p^(1/4) per-round survival
+                            # Expected remaining = sum of P(reach round r) for r in remaining rounds
+                            # Simplified: use log scale — higher prob = more expected games
+                            import math
+                            per_round = best_prob ** (1/4)  # implied per-round win rate
+                            # Expected additional games = sum P(survive to game g) for g=1..WBC_MAX_GAMES
+                            expected = sum(per_round ** g for g in range(1, WBC_MAX_GAMES + 1))
+                            expected = min(expected, WBC_MAX_GAMES)
+                            nation_data[nation] = {"eliminated": False, "expected_games": round(expected, 2)}
+                        else:
+                            # Not found in odds = likely eliminated
+                            nation_data[nation] = {"eliminated": True, "expected_games": 0.0}
+                    break  # got data, stop trying sport keys
+
+            except Exception as e:
+                print(f"  ⚠️  Odds API error for {sport_key}: {e}")
+                continue
+
+    except Exception as e:
+        print(f"  ⚠️  Could not fetch odds: {e} — using fallback uniform projection")
+
+    return nation_data
+
+
+def compute_proj_pts(player, pts_so_far, games_played_by_nation, nation_odds):
+    """
+    Project remaining fantasy points for a player.
+    - Hitters: pts_per_game × expected_remaining_games
+    - Pitchers: use IP-based rate × PITCHER_IP_STARTER or PITCHER_IP_RELIEVER
+    Returns (proj_pts, eliminated) tuple.
+    """
+    nation = player["nation"]
+    odds = nation_odds.get(nation, {"eliminated": False, "expected_games": 3.0})
+
+    if odds["eliminated"]:
+        return 0.0, True
+
+    expected_games = odds["expected_games"]
+    games_played = games_played_by_nation.get(nation, 1)
+    if games_played == 0:
+        games_played = 1
+
+    is_pitcher = player["pos"] == "P"
+
+    if is_pitcher:
+        # Determine if starter or reliever from IP rate
+        ip_per_game = PITCHER_IP_STARTER if pts_so_far > 0 and pts_so_far / games_played > 5 else PITCHER_IP_RELIEVER
+        # Projected IP remaining
+        proj_ip = ip_per_game * expected_games
+        # Use pitching scoring: ip*3 is the baseline, scale from current pts rate
+        pts_per_ip = (pts_so_far / (games_played * ip_per_game)) if games_played > 0 and pts_so_far != 0 else SCORING["pitching"]["ip"]
+        proj = pts_per_ip * proj_ip
+    else:
+        pts_per_game = pts_so_far / games_played if pts_so_far != 0 else 0
+        proj = pts_per_game * expected_games
+
+    return round(proj, 1), False
+
+
 def normalize(name):
     import unicodedata, re
     name = unicodedata.normalize("NFD", name)
@@ -294,6 +464,14 @@ def fetch_stats():
             if finished:
                 print(f"  ✅ Using sportId={sport_id}: {len(finished)} completed games")
                 game_pks = finished
+                # Track games played per team name from schedule
+                team_game_counts = {}
+                for g in games:
+                    if g.get("status",{}).get("abstractGameState") in ("Final","Live"):
+                        for side in ["away","home"]:
+                            tname = g.get("teams",{}).get(side,{}).get("team",{}).get("name","")
+                            if tname:
+                                team_game_counts[tname.lower()] = team_game_counts.get(tname.lower(),0) + 1
                 break
         except Exception as e:
             print(f"  ❌ sportId={sport_id}: {e}")
@@ -302,7 +480,15 @@ def fetch_stats():
     if not game_pks:
         print("\n⚠️  No completed games found via schedule. Check output above for clues.")
         print("   The WBC may not have started yet, or uses a different API structure.")
-        return cache, 0
+        return cache, 0, {}
+
+    # Map team game counts to nation labels via NATION_ALIASES
+    games_played_by_nation = {}
+    for nation, aliases in NATION_ALIASES.items():
+        for tname, count in team_game_counts.items():
+            if any(alias in tname for alias in aliases):
+                games_played_by_nation[nation] = max(games_played_by_nation.get(nation, 0), count)
+    print(f"  📊 Games played by nation: {games_played_by_nation}")
 
     print(f"\n📊 Step 3: Fetching box scores for {len(game_pks)} completed games...")
     for i, pk in enumerate(game_pks):
@@ -331,10 +517,10 @@ def fetch_stats():
             print(f"  ❌ Game pk={pk}: {e}")
 
     print(f"\n✅ Total unique players with stats: {len(cache)}")
-    return cache, len(game_pks)
+    return cache, len(game_pks), games_played_by_nation
 
 # ─── SCORE ────────────────────────────────────────────────────────────────────
-def score_roster(owner, cache):
+def score_roster(owner, cache, ownership=None, nation_odds=None, games_played_by_nation=None):
     players = ROSTERS[owner]["players"]
     results = []
     total = 0
@@ -346,6 +532,12 @@ def score_roster(owner, cache):
         p_pts = calc_pitching(entry["pitching"]) if entry and entry["pitching"] else 0
         pts = h_pts + p_pts
         total += pts
+
+        # Projection
+        if nation_odds and games_played_by_nation is not None:
+            proj, eliminated = compute_proj_pts(p, pts, games_played_by_nation, nation_odds)
+        else:
+            proj, eliminated = None, False
 
         h = entry["hitting"] if entry else None
         pit = entry["pitching"] if entry else None
@@ -381,7 +573,10 @@ def score_roster(owner, cache):
         results.append({
             "name": p["name"], "pos": p["pos"], "nation": p["nation"],
             "pts": round(pts), "h_pts": round(h_pts), "p_pts": round(p_pts),
-            "stat_items": stat_items, "found": entry is not None
+            "stat_items": stat_items, "found": entry is not None,
+            "ownership": ownership.get(normalize(p["name"]), (0, len(ROSTERS), [])) if ownership else (0, len(ROSTERS), []),
+            "proj_pts": proj,
+            "eliminated": eliminated,
         })
     return round(total), results
 
@@ -392,15 +587,21 @@ FLAGS = {
     "GB":"🇬🇧","Colombia":"🇨🇴","Cuba":"🇨🇺","Panama":"🇵🇦","Australia":"🇦🇺","Taiwan":"🇹🇼"
 }
 
-def build_html(cache, games_processed):
+def build_html(cache, games_processed, games_played_by_nation=None):
     from datetime import timezone, timedelta
     pst = timezone(timedelta(hours=-8))
     updated = datetime.now(pst).strftime("%B %d, %Y at %I:%M %p PST")
 
+    # Fetch odds/projections
+    print("\n📡 Fetching WBC advancement odds...")
+    nation_odds = fetch_nation_odds()
+    games_played_by_nation = games_played_by_nation or {}
+
     # Build ranked teams
+    ownership = compute_ownership(normalize)
     teams = []
     for owner, data in ROSTERS.items():
-        score, players = score_roster(owner, cache)
+        score, players = score_roster(owner, cache, ownership, nation_odds, games_played_by_nation)
         teams.append({"owner": owner, "color": data["color"], "score": score, "players": players})
     teams.sort(key=lambda t: t["score"], reverse=True)
 
@@ -432,9 +633,14 @@ def build_html(cache, games_processed):
                 stat_html = f'<div class="spills">{pills}</div>'
             else:
                 stat_html = '<span class="no-stats">no stats yet</span>'
+            own_count, own_total, own_teams = p["ownership"]
+            own_class = "own-pct high" if own_count == own_total else "own-pct"
+            own_tooltip = ", ".join(own_teams) if own_teams else "None"
+
             rows += f"""
             <tr>
               <td><span class="pos-badge">{p["pos"]}</span>{flag} {p["name"]}</td>
+              <td class="num"><span class="own-cell {own_class}" data-owners="{own_tooltip}">{own_count}/{own_total}<span class="own-tooltip">{own_tooltip}</span></span></td>
               <td>{stat_html}</td>
               <td class="num {pts_class}">{pts_str}</td>
             </tr>"""
@@ -460,7 +666,7 @@ def build_html(cache, games_processed):
           <div class="roster-detail">
             <table class="roster-table">
               <thead><tr>
-                <th>Player</th><th>Stats</th><th class="num">Pts</th>
+                <th>Player</th><th class="num">Owned</th><th>Stats</th><th class="num">Pts</th>
               </tr></thead>
               <tbody>{rows}</tbody>
             </table>
@@ -552,6 +758,16 @@ def build_html(cache, games_processed):
   .pts-pos {{ color:var(--accent2); }}
   .pts-neg {{ color:var(--red); }}
   .pts-zero {{ color:var(--muted); }}
+  .own-pct {{ color:var(--muted); font-family:'DM Mono',monospace; font-size:.68rem; }}
+  .own-pct.high {{ color:var(--accent); font-weight:500; }}
+  .own-cell {{ position:relative; cursor:default; font-family:'DM Mono',monospace; font-size:.68rem; display:inline-block; }}
+  .own-tooltip {{ display:none; position:absolute; right:0; top:100%; margin-top:4px; background:#1e242c; border:1px solid var(--border); border-radius:6px; padding:.4rem .65rem; font-family:'DM Mono',monospace; font-size:.65rem; color:var(--text); white-space:nowrap; z-index:100; box-shadow:0 4px 16px rgba(0,0,0,.5); pointer-events:none; }}
+  .own-tooltip::before {{ content:'Owned by'; display:block; font-size:.55rem; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; margin-bottom:.3rem; }}
+  .own-cell:hover .own-tooltip {{ display:block; }}
+  .proj-pos {{ color:var(--accent2); font-family:'DM Mono',monospace; font-size:.68rem; }}
+  .proj-neg {{ color:var(--red); font-family:'DM Mono',monospace; font-size:.68rem; }}
+  .proj-na  {{ color:var(--muted); font-family:'DM Mono',monospace; font-size:.68rem; }}
+  .proj-elim {{ font-family:'DM Mono',monospace; font-size:.58rem; font-weight:600; letter-spacing:.06em; color:#ff6b6b; background:rgba(240,82,82,.12); border:1px solid rgba(240,82,82,.3); border-radius:3px; padding:.1rem .35rem; }}
   .info-note {{ background:rgba(232,200,74,.07); border:1px solid rgba(232,200,74,.2); border-radius:6px; padding:.8rem 1rem; font-family:'DM Mono',monospace; font-size:.68rem; color:rgba(232,200,74,.7); margin-bottom:1.5rem; }}
   .scoring-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }}
   .scoring-section {{ background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.5rem; }}
@@ -661,7 +877,7 @@ if __name__ == "__main__":
     print("=" * 50)
 
     try:
-        cache, games_processed = fetch_stats()
+        cache, games_processed, games_played_by_nation = fetch_stats()
     except Exception as e:
         print(f"\n❌ Fatal error: {e}")
         sys.exit(1)
@@ -674,7 +890,7 @@ if __name__ == "__main__":
     for owner, score in sorted(teams, key=lambda x: -x[1]):
         print(f"  {owner:12} {score:6} pts")
 
-    html = build_html(cache, games_processed)
+    html = build_html(cache, games_processed, games_played_by_nation)
     outfile = "wbc_dashboard.html"
     with open(outfile, "w", encoding="utf-8") as f:
         f.write(html)

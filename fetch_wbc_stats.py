@@ -760,7 +760,7 @@ def build_html(cache, games_processed, games_played_by_nation=None):
   .pts-zero {{ color:var(--muted); }}
   .own-pct {{ color:var(--muted); font-family:'DM Mono',monospace; font-size:.68rem; }}
   .own-pct.high {{ color:var(--accent); font-weight:500; }}
-  .own-cell {{ position:relative; cursor:default; font-family:'DM Mono',monospace; font-size:.68rem; display:inline-block; }}
+  .own-cell {{ position:relative; cursor:pointer; font-family:'DM Mono',monospace; font-size:.68rem; display:inline-block; }}
   .own-tooltip {{ display:none; position:absolute; right:0; top:100%; margin-top:4px; background:#1e242c; border:1px solid var(--border); border-radius:6px; padding:.4rem .65rem; font-family:'DM Mono',monospace; font-size:.65rem; color:var(--text); white-space:nowrap; z-index:100; box-shadow:0 4px 16px rgba(0,0,0,.5); pointer-events:none; }}
   .own-tooltip::before {{ content:'Owned by'; display:block; font-size:.55rem; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; margin-bottom:.3rem; }}
   .own-cell:hover .own-tooltip {{ display:block; }}
@@ -866,6 +866,19 @@ function toggleRoster(btn) {{
   detail.classList.toggle('open');
   btn.textContent = detail.classList.contains('open') ? '▲ ROSTER' : '▼ ROSTER';
 }}
+
+document.addEventListener('click', function(e) {{
+  const cell = e.target.closest('.own-cell');
+  if (cell) {{
+    e.stopPropagation();
+    const tooltip = cell.querySelector('.own-tooltip');
+    const isOpen = tooltip.style.display === 'block';
+    document.querySelectorAll('.own-tooltip').forEach(t => t.style.display = 'none');
+    tooltip.style.display = isOpen ? 'none' : 'block';
+  }} else {{
+    document.querySelectorAll('.own-tooltip').forEach(t => t.style.display = 'none');
+  }}
+}});
 </script>
 </body>
 </html>"""

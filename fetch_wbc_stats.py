@@ -50,6 +50,16 @@ NATION_ALIASES = {
     "Taiwan":      ["taiwan", "chinese taipei"],
 }
 
+def team_name_to_nation(team_name):
+    """Map a WBC API team name string to our nation label."""
+    if not team_name:
+        return None
+    tl = team_name.lower()
+    for nation, aliases in NATION_ALIASES.items():
+        if any(alias in tl for alias in aliases):
+            return nation
+    return None
+
 # WBC bracket: max possible remaining games by round
 # Pool play (4 games) + Super Round (4) + Semi (1) + Final (1) = 10 max total
 WBC_MAX_GAMES = 10
@@ -500,6 +510,7 @@ def fetch_stats():
             players_found = 0
             for side in ["away", "home"]:
                 team = box.get("teams", {}).get(side, {})
+                team_name = team.get("team", {}).get("name", "").lower()
                 for pid_str, player in team.get("players", {}).items():
                     name = player.get("person", {}).get("fullName")
                     pid  = player.get("person", {}).get("id")
@@ -512,6 +523,10 @@ def fetch_stats():
                     if pit and parse_ip(pit.get("inningsPitched","0")) > 0:
                         merge(cache, name, pid, "pitching", pit)
                         players_found += 1
+                    # Store team name on cache entry for flag lookup
+                    key = normalize(name)
+                    if key in cache and team_name and "team_name" not in cache[key]:
+                        cache[key]["team_name"] = team_name
             print(f"  Game {i+1}/{len(game_pks)} pk={pk}: {players_found} player-stats merged")
         except Exception as e:
             print(f"  ❌ Game pk={pk}: {e}")
@@ -589,8 +604,8 @@ FLAGS = {
 
 def build_html(cache, games_processed, games_played_by_nation=None):
     from datetime import timezone, timedelta
-    pst = timezone(timedelta(hours=-8))
-    updated = datetime.now(pst).strftime("%B %d, %Y at %I:%M %p PST")
+    pst = timezone(timedelta(hours=-7))
+    updated = datetime.now(pst).strftime("%B %d, %Y at %I:%M %p PDT")
 
     # Fetch odds/projections
     print("\n📡 Fetching WBC advancement odds...")
@@ -689,6 +704,107 @@ def build_html(cache, games_processed, games_played_by_nation=None):
         sign = "+" if pts > 0 else ""
         scoring_html_pit += f'<div class="scoring-row"><span>{label}</span><span class="scoring-pts {cls}">{sign}{pts}</span></div>'
 
+    # ── Build Top Players table ──────────────────────────────────────────────
+    # Build a lookup of rostered players so we know pos for cache entries
+    rostered_pos = {}
+    for data in ROSTERS.values():
+        for p in data["players"]:
+            key = normalize(p["name"])
+            if key not in rostered_pos:
+                rostered_pos[key] = p["pos"]
+
+    # Start from the full stats cache so unowned players are included
+    all_players_map = {}
+    for key, entry in cache.items():
+        has_hit = entry.get("hitting") is not None
+        has_pit = entry.get("pitching") is not None
+        pos = rostered_pos.get(key, "P" if has_pit and not has_hit else "UTIL")
+        is_p = pos == "P"
+
+        h_pts = calc_hitting(entry["hitting"]) if has_hit and not is_p else 0
+        p_pts = calc_pitching(entry["pitching"]) if has_pit else 0
+        pts = h_pts + p_pts
+
+        h = entry.get("hitting")
+        pit = entry.get("pitching")
+        if h and not is_p:
+            singles = h.get('hits',0) - h.get('doubles',0) - h.get('triples',0) - h.get('homeRuns',0)
+            tb = singles + 2*h.get('doubles',0) + 3*h.get('triples',0) + 4*h.get('homeRuns',0)
+            stat_items = [
+                (tb, "TB", 1), (h.get('rbi',0), "RBI", 1), (h.get('runs',0), "R", 1),
+                (h.get('stolenBases',0), "SB", 1), (h.get('baseOnBalls',0), "BB", 1),
+                (h.get('hitByPitch',0), "HBP", 1), (h.get('strikeOuts',0), "SO", -1),
+                (h.get('caughtStealing',0), "CS", -1),
+            ]
+        elif pit:
+            stat_items = [
+                (pit.get('inningsPitched','0'), "IP", 3), (pit.get('wins',0), "W", 2),
+                (pit.get('losses',0), "L", -2), (pit.get('strikeOuts',0), "K", 1),
+                (pit.get('earnedRuns',0), "ER", -2), (pit.get('hits',0), "HA", -1),
+                (pit.get('baseOnBalls',0), "BBA", -1), (pit.get('hitByPitch',0), "HB", -1),
+                (pit.get('saves',0), "SV", 4), (pit.get('holds',0), "HLD", 2),
+            ]
+        else:
+            stat_items = []
+
+        own_data = ownership.get(key, (0, len(ROSTERS), []))
+        # Resolve nation: prefer roster data, fall back to API team name
+        nation = team_name_to_nation(entry.get("team_name", "")) or "—"
+        all_players_map[key] = {
+            "name": entry["fullName"], "pos": pos, "nation": nation,
+            "pts": round(pts), "stat_items": stat_items,
+            "found": True, "ownership": own_data,
+        }
+
+    # Override nation with roster data where available (more precise labeling)
+    for data in ROSTERS.values():
+        for p in data["players"]:
+            key = normalize(p["name"])
+            if key in all_players_map:
+                all_players_map[key]["nation"] = p["nation"]
+
+    top_players = sorted(all_players_map.values(), key=lambda x: -x["pts"])
+
+    top_rows = ""
+    for rank, p in enumerate(top_players, 1):
+        flag = FLAGS.get(p["nation"], "🏳️")
+        pts_class = "pts-pos" if p["pts"] > 0 else ("pts-neg" if p["pts"] < 0 else "pts-zero")
+        pts_str = f"+{int(p['pts'])}" if p["pts"] > 0 else str(int(p["pts"]))
+        rank_cls = f"tp-rank-{rank}" if rank <= 3 else ""
+
+        if p["stat_items"]:
+            pills = ""
+            for val, label, direction in p["stat_items"]:
+                if direction > 0:
+                    pill_cls = "sp-pos" if float(str(val).replace("0.","").replace(".0","") or 0) else "sp-zero"
+                else:
+                    pill_cls = "sp-neg" if float(str(val).replace("0.","").replace(".0","") or 0) else "sp-zero"
+                pills += f'<span class="spill {pill_cls}">{val}&nbsp;<span class="slabel">{label}</span></span>'
+            stat_html = f'<div class="spills">{pills}</div>'
+        else:
+            stat_html = '<span class="no-stats">no stats yet</span>'
+
+        own_count, own_total, own_teams = p["ownership"]
+        own_class = "own-pct high" if own_count == own_total else "own-pct"
+        own_tooltip = ", ".join(own_teams) if own_teams else "None"
+
+        top_rows += f"""
+        <tr class="{rank_cls}">
+          <td class="num tp-rank">{rank}</td>
+          <td><span class="pos-badge">{p["pos"]}</span>{flag} {p["name"]}</td>
+          <td class="num"><span class="own-cell {own_class}" data-owners="{own_tooltip}">{own_count}/{own_total}<span class="own-tooltip">{own_tooltip}</span></span></td>
+          <td>{stat_html}</td>
+          <td class="num {pts_class}">{pts_str}</td>
+        </tr>"""
+
+    top_players_html = f"""
+    <table class="roster-table top-players-table">
+      <thead><tr>
+        <th class="num">#</th><th>Player</th><th class="num">Owned</th><th>Stats</th><th class="num">Pts</th>
+      </tr></thead>
+      <tbody>{top_rows}</tbody>
+    </table>"""
+
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -768,6 +884,19 @@ def build_html(cache, games_processed, games_played_by_nation=None):
   .proj-neg {{ color:var(--red); font-family:'DM Mono',monospace; font-size:.68rem; }}
   .proj-na  {{ color:var(--muted); font-family:'DM Mono',monospace; font-size:.68rem; }}
   .proj-elim {{ font-family:'DM Mono',monospace; font-size:.58rem; font-weight:600; letter-spacing:.06em; color:#ff6b6b; background:rgba(240,82,82,.12); border:1px solid rgba(240,82,82,.3); border-radius:3px; padding:.1rem .35rem; }}
+  .top-players-table {{ width:100%; border-collapse:collapse; font-size:.78rem; }}
+  .top-players-table th {{ font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:.5rem .6rem; border-bottom:1px solid var(--border); text-align:left; position:sticky; top:0; background:var(--bg); z-index:10; }}
+  .top-players-table th.num {{ text-align:right; }}
+  .top-players-table td {{ padding:.5rem .6rem; border-bottom:1px solid rgba(37,44,53,.5); }}
+  .top-players-table td.num {{ text-align:right; font-family:'DM Mono',monospace; font-size:.72rem; }}
+  .top-players-table tr:last-child td {{ border-bottom:none; }}
+  .tp-rank {{ font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--muted); width:2rem; }}
+  .tp-rank-1 .tp-rank {{ color:#e8c84a; }}
+  .tp-rank-2 .tp-rank {{ color:#9baab8; }}
+  .tp-rank-3 .tp-rank {{ color:#c97b4b; }}
+  .tp-rank-1 td {{ background:rgba(232,200,74,.03); }}
+  .tp-rank-2 td {{ background:rgba(155,170,184,.02); }}
+  .tp-rank-3 td {{ background:rgba(201,123,75,.02); }}
   .info-note {{ background:rgba(232,200,74,.07); border:1px solid rgba(232,200,74,.2); border-radius:6px; padding:.8rem 1rem; font-family:'DM Mono',monospace; font-size:.68rem; color:rgba(232,200,74,.7); margin-bottom:1.5rem; }}
   .scoring-grid {{ display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }}
   .scoring-section {{ background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.5rem; }}
@@ -807,6 +936,7 @@ def build_html(cache, games_processed, games_played_by_nation=None):
 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('leaderboard',this)">Leaderboard</button>
+  <button class="tab" onclick="switchTab('touplayers',this)">Top Players</button>
   <button class="tab" onclick="switchTab('scoring',this)">Scoring</button>
   <button class="tab" onclick="switchTab('howto',this)">Setup Guide</button>
 </div>
@@ -819,6 +949,13 @@ def build_html(cache, games_processed, games_played_by_nation=None):
   <div class="leaderboard">
     {cards_html}
   </div>
+</div>
+
+<div id="touplayers" class="tab-content">
+  <div class="info-note">
+    🏆 All rostered players ranked by fantasy points scored. Hover/tap Owned to see which teams drafted each player.
+  </div>
+  {top_players_html}
 </div>
 
 <div id="scoring" class="tab-content">

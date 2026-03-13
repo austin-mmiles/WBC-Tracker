@@ -27,43 +27,6 @@ BASE      = "https://statsapi.mlb.com/api/v1"
 HEADERS   = {"User-Agent": "WBCFantasy/1.0"}
 TIMEOUT   = 15
 
-# The Odds API key — get a free key at https://the-odds-api.com
-ODDS_API_KEY = "YOUR_ODDS_API_KEY_HERE"
-
-# WBC nation label → search strings for matching odds API team names
-NATION_ALIASES = {
-    "USA":         ["united states", "usa"],
-    "Japan":       ["japan"],
-    "DR":          ["dominican republic", "dominican"],
-    "Mexico":      ["mexico"],
-    "Venezuela":   ["venezuela"],
-    "PR":          ["puerto rico"],
-    "Korea":       ["korea", "south korea"],
-    "Canada":      ["canada"],
-    "Netherlands": ["netherlands"],
-    "Italy":       ["italy"],
-    "Cuba":        ["cuba"],
-    "Panama":      ["panama"],
-    "GB":          ["great britain", "gb"],
-    "Colombia":    ["colombia"],
-    "Australia":   ["australia"],
-    "Taiwan":      ["taiwan", "chinese taipei"],
-}
-
-def team_name_to_nation(team_name):
-    """Map a WBC API team name string to our nation label."""
-    if not team_name:
-        return None
-    tl = team_name.lower()
-    for nation, aliases in NATION_ALIASES.items():
-        if any(alias in tl for alias in aliases):
-            return nation
-    return None
-
-# WBC bracket: max possible remaining games by round
-# Pool play (4 games) + Super Round (4) + Semi (1) + Final (1) = 10 max total
-WBC_MAX_GAMES = 10
-
 # Pitcher role assumptions: innings per game appearance
 PITCHER_IP_STARTER  = 3.0
 PITCHER_IP_RELIEVER = 1.0
@@ -210,6 +173,35 @@ SCORING = {
     "pitching": {"ip":3,"w":2,"l":-2,"qs":3,"k":1,"bbA":-1,"er":-2,"hb":-1,"hA":-1,"hld":2,"sv":4},
 }
 
+# Nation label → API team name aliases (for flag/elimination lookup)
+NATION_ALIASES = {
+    "USA":         ["united states", "usa"],
+    "Japan":       ["japan"],
+    "DR":          ["dominican republic", "dominican"],
+    "Mexico":      ["mexico"],
+    "Venezuela":   ["venezuela"],
+    "PR":          ["puerto rico"],
+    "Korea":       ["korea", "south korea"],
+    "Canada":      ["canada"],
+    "Netherlands": ["netherlands"],
+    "Italy":       ["italy"],
+    "Cuba":        ["cuba"],
+    "Panama":      ["panama"],
+    "GB":          ["great britain", "gb"],
+    "Colombia":    ["colombia"],
+    "Australia":   ["australia"],
+    "Taiwan":      ["taiwan", "chinese taipei"],
+}
+
+def team_name_to_nation(team_name):
+    if not team_name:
+        return None
+    tl = team_name.lower()
+    for nation, aliases in NATION_ALIASES.items():
+        if any(alias in tl for alias in aliases):
+            return nation
+    return None
+
 # ─── OWNERSHIP ────────────────────────────────────────────────────────────────
 def compute_ownership(norm_fn):
     """Returns {normalized_player_name: (count, num_teams, [owner_names])} across all rosters."""
@@ -221,98 +213,29 @@ def compute_ownership(norm_fn):
             owner_map[norm_fn(p["name"])].append(owner)
     return {name: (len(owners), num_teams, owners) for name, owners in owner_map.items()}
 
-# ─── ODDS & PROJECTIONS ───────────────────────────────────────────────────────
+# ─── ELIMINATION ──────────────────────────────────────────────────────────────
+# Manually update this set as teams are knocked out of the tournament.
+# Nation names must match the keys used in NATION_ALIASES above.
+ELIMINATED_NATIONS = {
+    "Mexico",
+    "Netherlands",
+    "Cuba",
+    "Panama",
+    "GB",
+    "Colombia",
+    "Australia",
+    "Taiwan",
+}
+
 def fetch_nation_odds():
-    """
-    Fetch WBC advancement odds from The Odds API.
-    Returns dict: {nation_label: {"eliminated": bool, "expected_games": float}}
-    Falls back to uniform distribution if API unavailable or key not set.
-    """
-    nation_data = {n: {"eliminated": False, "expected_games": 3.0} for n in NATION_ALIASES}
-
-    if ODDS_API_KEY == "YOUR_ODDS_API_KEY_HERE":
-        print("  ⚠️  No Odds API key set — using fallback uniform projection (3 expected games each)")
-        return nation_data
-
-    try:
-        # Try to find WBC odds — sport key may be baseball_wbc or similar
-        sports_url = "https://api.the-odds-api.com/v4/sports"
-        r = requests.get(sports_url, params={"apiKey": ODDS_API_KEY}, timeout=TIMEOUT)
-        r.raise_for_status()
-        sports = r.json()
-        wbc_keys = [s["key"] for s in sports if "wbc" in s["key"].lower() or
-                    ("baseball" in s["key"].lower() and "classic" in s.get("title","").lower())]
-        print(f"  📡 Odds API sports found: {[s['key'] for s in sports if 'baseball' in s['key'].lower()]}")
-
-        if not wbc_keys:
-            # Fall back: try generic baseball outrights
-            wbc_keys = ["baseball_wbc", "baseball_world_baseball_classic"]
-
-        for sport_key in wbc_keys:
-            try:
-                # Fetch outright winner odds to get championship probabilities
-                odds_url = f"https://api.the-odds-api.com/v4/sports/{sport_key}/odds"
-                r = requests.get(odds_url, params={
-                    "apiKey": ODDS_API_KEY,
-                    "regions": "us",
-                    "markets": "outrights,h2h",
-                    "oddsFormat": "decimal",
-                }, timeout=TIMEOUT)
-                if r.status_code == 404:
-                    continue
-                r.raise_for_status()
-                events = r.json()
-                print(f"  📡 Got {len(events)} events from odds API (sport={sport_key})")
-
-                # Parse team win probabilities from implied odds
-                team_probs = {}
-                for event in events:
-                    for bm in event.get("bookmakers", [])[:1]:  # use first bookmaker
-                        for market in bm.get("markets", []):
-                            for outcome in market.get("outcomes", []):
-                                tname = outcome["name"].lower()
-                                prob = 1 / outcome["price"] if outcome["price"] > 0 else 0
-                                team_probs[tname] = max(team_probs.get(tname, 0), prob)
-
-                if team_probs:
-                    print(f"  📡 Team probabilities parsed: {list(team_probs.keys())[:6]}...")
-                    # Normalize probabilities (bookmaker overround)
-                    total = sum(team_probs.values())
-                    if total > 0:
-                        team_probs = {k: v / total for k, v in team_probs.items()}
-
-                    # Map to our nation labels
-                    for nation, aliases in NATION_ALIASES.items():
-                        best_prob = 0.0
-                        for tname, prob in team_probs.items():
-                            if any(alias in tname for alias in aliases):
-                                best_prob = max(best_prob, prob)
-
-                        if best_prob > 0:
-                            # Convert championship probability to expected remaining games
-                            # WBC has ~4 rounds. P(win title)=p → expected games ≈
-                            # p(advance each round) estimated via p^(1/4) per-round survival
-                            # Expected remaining = sum of P(reach round r) for r in remaining rounds
-                            # Simplified: use log scale — higher prob = more expected games
-                            import math
-                            per_round = best_prob ** (1/4)  # implied per-round win rate
-                            # Expected additional games = sum P(survive to game g) for g=1..WBC_MAX_GAMES
-                            expected = sum(per_round ** g for g in range(1, WBC_MAX_GAMES + 1))
-                            expected = min(expected, WBC_MAX_GAMES)
-                            nation_data[nation] = {"eliminated": False, "expected_games": round(expected, 2)}
-                        else:
-                            # Not found in odds = likely eliminated
-                            nation_data[nation] = {"eliminated": True, "expected_games": 0.0}
-                    break  # got data, stop trying sport keys
-
-            except Exception as e:
-                print(f"  ⚠️  Odds API error for {sport_key}: {e}")
-                continue
-
-    except Exception as e:
-        print(f"  ⚠️  Could not fetch odds: {e} — using fallback uniform projection")
-
-    return nation_data
+    """Returns elimination status based on ELIMINATED_NATIONS set above."""
+    result = {}
+    for nation in NATION_ALIASES:
+        eliminated = nation in ELIMINATED_NATIONS
+        result[nation] = {"eliminated": eliminated, "expected_games": 0.0 if eliminated else 3.0}
+        if eliminated:
+            print(f"  ❌ {nation} — eliminated")
+    return result
 
 
 def compute_proj_pts(player, pts_so_far, games_played_by_nation, nation_odds):
@@ -629,13 +552,17 @@ def build_html(cache, games_processed, games_played_by_nation=None):
         found_count = sum(1 for p in team["players"] if p["found"])
         hit_pts = sum(p["h_pts"] for p in team["players"])
         pit_pts = sum(p["p_pts"] for p in team["players"])
+        active_count = sum(1 for p in team["players"] if not p["eliminated"])
+        elim_count   = sum(1 for p in team["players"] if p["eliminated"])
 
         # Roster rows
         rows = ""
-        for p in sorted(team["players"], key=lambda x: -x["pts"]):
+        for p in sorted(team["players"], key=lambda x: (-x["pts"], x["eliminated"])):
             flag = FLAGS.get(p["nation"], "🏳️")
             pts_class = "pts-pos" if p["pts"] > 0 else ("pts-neg" if p["pts"] < 0 else "pts-zero")
             pts_str = (f"+{int(p['pts'])}" if p["pts"] > 0 else str(int(p["pts"]))) if p["found"] else "—"
+            elim_class = " player-elim" if p["eliminated"] else ""
+            elim_badge = ' <span class="elim-badge">ELIM</span>' if p["eliminated"] else ""
             # Build stat pill badges — always show all, color-coded by whether they help or hurt
             if p["stat_items"]:
                 pills = ""
@@ -653,8 +580,8 @@ def build_html(cache, games_processed, games_played_by_nation=None):
             own_tooltip = ", ".join(own_teams) if own_teams else "None"
 
             rows += f"""
-            <tr>
-              <td><span class="pos-badge">{p["pos"]}</span>{flag} {p["name"]}</td>
+            <tr class="player-row{elim_class}">
+              <td><span class="pos-badge">{p["pos"]}</span>{flag} {p["name"]}{elim_badge}</td>
               <td class="num"><span class="own-cell {own_class}" data-owners="{own_tooltip}">{own_count}/{own_total}<span class="own-tooltip">{own_tooltip}</span></span></td>
               <td>{stat_html}</td>
               <td class="num {pts_class}">{pts_str}</td>
@@ -675,6 +602,8 @@ def build_html(cache, games_processed, games_played_by_nation=None):
             <div class="stat-pill pos">HIT <span>+{int(hit_pts)}</span></div>
             <div class="stat-pill pos">PITCH <span>+{int(pit_pts)}</span></div>
             <div class="stat-pill">FOUND <span>{found_count}/{len(team['players'])}</span></div>
+            <div class="stat-pill active-pill">ACTIVE <span>{active_count}</span></div>
+            {f'<div class="stat-pill elim-pill">ELIM <span>{elim_count}</span></div>' if elim_count > 0 else ''}
             <div style="flex:1"></div>
             <div class="stat-pill toggle-btn" onclick="toggleRoster(this)" style="border-color:{color};color:{color}">▼ ROSTER</div>
           </div>
@@ -750,10 +679,11 @@ def build_html(cache, games_processed, games_played_by_nation=None):
         own_data = ownership.get(key, (0, len(ROSTERS), []))
         # Resolve nation: prefer roster data, fall back to API team name
         nation = team_name_to_nation(entry.get("team_name", "")) or "—"
+        is_elim = nation_odds.get(nation, {}).get("eliminated", False)
         all_players_map[key] = {
             "name": entry["fullName"], "pos": pos, "nation": nation,
             "pts": round(pts), "stat_items": stat_items,
-            "found": True, "ownership": own_data,
+            "found": True, "ownership": own_data, "eliminated": is_elim,
         }
 
     # Override nation with roster data where available (more precise labeling)
@@ -762,6 +692,7 @@ def build_html(cache, games_processed, games_played_by_nation=None):
             key = normalize(p["name"])
             if key in all_players_map:
                 all_players_map[key]["nation"] = p["nation"]
+                all_players_map[key]["eliminated"] = nation_odds.get(p["nation"], {}).get("eliminated", False)
 
     top_players = sorted(all_players_map.values(), key=lambda x: -x["pts"])
 
@@ -771,6 +702,8 @@ def build_html(cache, games_processed, games_played_by_nation=None):
         pts_class = "pts-pos" if p["pts"] > 0 else ("pts-neg" if p["pts"] < 0 else "pts-zero")
         pts_str = f"+{int(p['pts'])}" if p["pts"] > 0 else str(int(p["pts"]))
         rank_cls = f"tp-rank-{rank}" if rank <= 3 else ""
+        elim_class = " player-elim" if p.get("eliminated") else ""
+        elim_badge = ' <span class="elim-badge">ELIM</span>' if p.get("eliminated") else ""
 
         if p["stat_items"]:
             pills = ""
@@ -789,9 +722,9 @@ def build_html(cache, games_processed, games_played_by_nation=None):
         own_tooltip = ", ".join(own_teams) if own_teams else "None"
 
         top_rows += f"""
-        <tr class="{rank_cls}">
+        <tr class="{rank_cls}{elim_class}">
           <td class="num tp-rank">{rank}</td>
-          <td><span class="pos-badge">{p["pos"]}</span>{flag} {p["name"]}</td>
+          <td><span class="pos-badge">{p["pos"]}</span>{flag} {p["name"]}{elim_badge}</td>
           <td class="num"><span class="own-cell {own_class}" data-owners="{own_tooltip}">{own_count}/{own_total}<span class="own-tooltip">{own_tooltip}</span></span></td>
           <td>{stat_html}</td>
           <td class="num {pts_class}">{pts_str}</td>
@@ -874,6 +807,13 @@ def build_html(cache, games_processed, games_played_by_nation=None):
   .pts-pos {{ color:var(--accent2); }}
   .pts-neg {{ color:var(--red); }}
   .pts-zero {{ color:var(--muted); }}
+  .player-elim {{ opacity:.5; }}
+  .player-elim td {{ text-decoration:line-through; text-decoration-color:rgba(240,82,82,.4); }}
+  .player-elim .pos-badge, .player-elim .spill {{ opacity:.6; }}
+  .elim-badge {{ font-family:'DM Mono',monospace; font-size:.52rem; font-weight:600; letter-spacing:.06em; color:#f05252; background:rgba(240,82,82,.12); border:1px solid rgba(240,82,82,.3); border-radius:3px; padding:.1rem .3rem; margin-left:.35rem; vertical-align:middle; text-decoration:none; display:inline-block; }}
+  .elim-pill {{ border-color:rgba(240,82,82,.3) !important; }}
+  .elim-pill span {{ color:var(--red) !important; }}
+  .active-pill span {{ color:var(--accent2) !important; }}
   .own-pct {{ color:var(--muted); font-family:'DM Mono',monospace; font-size:.68rem; }}
   .own-pct.high {{ color:var(--accent); font-weight:500; }}
   .own-cell {{ position:relative; cursor:pointer; font-family:'DM Mono',monospace; font-size:.68rem; display:inline-block; }}

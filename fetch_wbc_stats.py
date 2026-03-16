@@ -233,6 +233,7 @@ ELIMINATED_NATIONS = {
     "Canada",
     "Japan",
     "PR",
+    "DR",
 }
 
 def fetch_nation_odds():

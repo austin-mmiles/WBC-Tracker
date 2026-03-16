@@ -225,6 +225,14 @@ ELIMINATED_NATIONS = {
     "Colombia",
     "Australia",
     "Taiwan",
+    "Brazil",
+    "Czechia",
+    "Israel",
+    "Nicaragua",
+    "Korea",
+    "Canada",
+    "Japan",
+    "PR",
 }
 
 def fetch_nation_odds():
